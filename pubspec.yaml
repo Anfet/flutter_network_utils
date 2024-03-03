@@ -1,0 +1,27 @@
+name: siberian_network
+description: "Siberian core network module"
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  logger: ^2.0.2+1
+  dio: ^5.4.1
+
+  siberian_core:
+    git:
+      url: "https://git.siberian.pro/toplionkin/flutter_siberian_core.git"
+      ref: "release/1.0.7"
+
+dev_dependencies:
+  flutter_lints: ^3.0.1
+
+flutter:
+  assets:
+    - assets/certs/
