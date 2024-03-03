@@ -38,6 +38,10 @@ class LoggingInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
+    var startTime = DateTime.fromMillisecondsSinceEpoch(err.requestOptions.extra['start-time'] as int);
+    var endTime = DateTime.now();
+    var msec = endTime.difference(startTime).inMilliseconds;
+    logger.t('$_tag <= ERROR ${err.requestOptions.uri} ($msec msec)');
     verbose(err.response);
     return handler.next(err);
   }
