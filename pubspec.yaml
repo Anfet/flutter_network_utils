@@ -13,11 +13,19 @@ dependencies:
 
   logger: ^2.0.2+1
   dio: ^5.4.1
+  path_provider: any
+  share_plus: any
+
 
   siberian_core:
     git:
       url: "https://git.siberian.pro/toplionkin/flutter_siberian_core.git"
       ref: "release/1.0.7"
+
+  siberian_config:
+    git:
+      url: "https://git.siberian.pro/toplionkin/siberian_config"
+      ref: "master"
 
 dev_dependencies:
   flutter_lints: ^3.0.1

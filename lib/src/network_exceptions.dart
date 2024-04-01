@@ -5,7 +5,7 @@ class NetworkException extends AppException {
 }
 
 class NoNetworkException extends NetworkException {
-  NoNetworkException(String message) : super(message);
+  NoNetworkException(super.message);
 }
 
 class ServerException extends NetworkException {
