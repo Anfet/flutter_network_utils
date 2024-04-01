@@ -5,29 +5,42 @@ import 'package:path_provider/path_provider.dart';
 import 'package:siberian_core/siberian_core.dart';
 import 'package:siberian_network/src/logging_interceptor.dart';
 
-class NetworkInterceptors {
-  NetworkInterceptors._();
+class NetworkLoggers {
+  NetworkLoggers._();
 
-  static LoggingInterceptor? _networkLogFileInterceptor;
+  static LoggingInterceptor? _networkToFileInterceptor;
 
-  static LoggingInterceptor get networkLogFileInterceptor => require(networkLogFileInterceptor);
+  static LoggingInterceptor get networkToFileInterceptor => require(_networkToFileInterceptor);
 
-  static Future<void> initInterceptors() async {
+  static Future<File> get networkLogFile async {
     final cacheDir = await getApplicationCacheDirectory();
     final file = File('${cacheDir.path}/network.log');
+    return file;
+  }
 
-    _networkLogFileInterceptor ??= LoggingInterceptor(
+  static Future<void> initInterceptors({
+    required bool logToFile,
+    required bool logToConsole,
+  }) async {
+    _networkToFileInterceptor ??= LoggingInterceptor(
+      name: 'file_logger',
+      isEnabled: logToFile,
       Logger(
         printer: CustomLogger(truncateMessages: false),
-        output: FileOutput(file: file),
+        output: FileOutput(file: await networkLogFile),
         filter: ProductionFilter(),
       ),
     );
+    _networkToFileInterceptor?.logger.t('${_networkToFileInterceptor?.name} ------- INIT --------');
+
+    networkToConsoleInterceptor.isEnabled = logToConsole;
+    networkToConsoleInterceptor.logger.t('${networkToConsoleInterceptor.name} ------- INIT --------');
   }
 
-  static LoggingInterceptor consoleInterceptor = LoggingInterceptor(
+  static LoggingInterceptor networkToConsoleInterceptor = LoggingInterceptor(
+    name: 'console_logger',
     Logger(
-      printer: CustomLogger(truncateMessages: true),
+      printer: CustomLogger(truncateMessages: false),
       filter: DevelopmentFilter(),
     ),
   );
