@@ -78,7 +78,7 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
             onPressed: () async {
               NetworkLoggers.networkLogFile.then((file) => file.delete()).ignore();
               showToast(widget.deleteToastMessage);
-              setStateChecked(() {
+              setState(() {
                 text = const Loadable('');
               });
             },
@@ -146,7 +146,7 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
     var file = await NetworkLoggers.networkLogFile;
     var text = file.existsSync() ? await file.readAsString() : '';
 
-    setStateChecked(() {
+    setState(() {
       this.text = text.asValue;
     });
 
@@ -155,7 +155,7 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
 
   void scheduleTimer() {
     cancelTimer();
-    setStateChecked(() {
+    setState(() {
       timer = Timer.periodic(const Duration(seconds: 1), (timer) {
         loadNetworkLog();
       });
@@ -164,7 +164,7 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
 
   void cancelTimer() {
     timer?.cancel();
-    setStateChecked(() {});
+    markNeedsRebuild();
   }
 }
 
