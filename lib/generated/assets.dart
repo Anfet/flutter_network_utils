@@ -3,4 +3,6 @@ class Assets {
   Assets._();
 
   static const String certsCharley = 'assets/certs/charley.pem';
+  static const String fontsSpaceMonoRegular = 'assets/fonts/SpaceMono-Regular.ttf';
+
 }

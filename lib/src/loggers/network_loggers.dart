@@ -26,21 +26,28 @@ class NetworkLoggers {
       name: 'file_logger',
       isEnabled: logToFile,
       Logger(
-        printer: CustomLogger(truncateMessages: false),
+        printer: CustomLogger(
+          truncateMessages: false,
+          isColored: false,
+          messageTransformer: (message) {
+            return message;
+          },
+        ),
         output: FileOutput(file: await networkLogFile),
         filter: ProductionFilter(),
       ),
     );
-    _networkToFileInterceptor?.logger.t('${_networkToFileInterceptor?.name} ------- INIT --------');
 
     networkToConsoleInterceptor.isEnabled = logToConsole;
-    networkToConsoleInterceptor.logger.t('${networkToConsoleInterceptor.name} ------- INIT --------');
   }
 
   static LoggingInterceptor networkToConsoleInterceptor = LoggingInterceptor(
     name: 'console_logger',
     Logger(
-      printer: CustomLogger(truncateMessages: false),
+      printer: CustomLogger(
+        truncateMessages: false,
+        isColored: false,
+      ),
       filter: DevelopmentFilter(),
     ),
   );
