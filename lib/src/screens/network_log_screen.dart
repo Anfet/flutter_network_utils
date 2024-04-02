@@ -60,6 +60,7 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
             onPressed: () {
               if (timer?.isActive == true) {
                 cancelTimer();
+                markNeedsRebuild();
               } else {
                 scheduleTimer();
               }
@@ -155,17 +156,13 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
 
   void scheduleTimer() {
     cancelTimer();
-    setState(() {
-      timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        loadNetworkLog();
-      });
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      loadNetworkLog();
     });
-  }
-
-  void cancelTimer() {
-    timer?.cancel();
     markNeedsRebuild();
   }
+
+  void cancelTimer() => timer?.cancel();
 }
 
 class TwoDimensinalScrollText extends TwoDimensionalScrollView {
