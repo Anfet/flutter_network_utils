@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:siberian_core/siberian_core.dart';
+import 'package:siberian_logger/siberian_logger.dart';
 
 import 'network_exceptions.dart';
 
@@ -129,7 +130,7 @@ class NetworkCallExecutor with Logging {
     }
 
     if (error != null) {
-      warn(error, stackTrace: StackTrace.current, error: error);
+      warn(error, stack: StackTrace.current, error: error);
       throw error;
     }
 

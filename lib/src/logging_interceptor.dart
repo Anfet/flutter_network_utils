@@ -16,10 +16,11 @@ class LoggingInterceptor extends Interceptor {
 
   set isEnabled(bool value) {
     _enabled = value;
-    siberian_core.logger.t("$name => ${value ? 'enabled' : 'disabled'}");
+    logger.t("$name => ${value ? 'enabled' : 'disabled'}");
   }
 
-  LoggingInterceptor(this.logger, {
+  LoggingInterceptor(
+    this.logger, {
     required this.name,
     this.logHeaders = true,
     bool isEnabled = true,
@@ -39,9 +40,7 @@ class LoggingInterceptor extends Interceptor {
       }
     }
 
-    return handler.next(options.copyWith(extra: {"start-time": DateTime
-        .now()
-        .millisecondsSinceEpoch}));
+    return handler.next(options.copyWith(extra: {"start-time": DateTime.now().millisecondsSinceEpoch}));
   }
 
   @override
@@ -57,9 +56,7 @@ class LoggingInterceptor extends Interceptor {
     if (isEnabled) {
       var startTime = DateTime.fromMillisecondsSinceEpoch(err.requestOptions.extra['start-time'] as int);
       var endTime = DateTime.now();
-      var msec = endTime
-          .difference(startTime)
-          .inMilliseconds;
+      var msec = endTime.difference(startTime).inMilliseconds;
       logger.t('$_tag <= ERROR ${err.requestOptions.uri} ($msec msec)');
       verbose(err.response);
     }
@@ -74,14 +71,11 @@ class LoggingInterceptor extends Interceptor {
 
     var startTime = DateTime.fromMillisecondsSinceEpoch(response.requestOptions.extra['start-time'] as int);
     var endTime = DateTime.now();
-    var msec = endTime
-        .difference(startTime)
-        .inMilliseconds;
+    var msec = endTime.difference(startTime).inMilliseconds;
 
     dynamic contentLength = response.headers['content-length']?.firstOrNull ?? _calculateContentLength(response);
     logger.t(
-        '$_tag <= ${response.statusCode} ${response.requestOptions.method} ${response.requestOptions.uri} \'${response
-            .statusMessage}\' ($contentLength bytes / $msec msec)');
+        '$_tag <= ${response.statusCode} ${response.requestOptions.method} ${response.requestOptions.uri} \'${response.statusMessage}\' ($contentLength bytes / $msec msec)');
 
     if (response.data != null) {
       if (response.data is Map) {

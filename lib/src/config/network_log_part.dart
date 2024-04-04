@@ -2,16 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/painting/edge_insets.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:logger/logger.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:siberian_config/siberian_config.dart';
 import 'package:siberian_core/siberian_core.dart';
 import 'package:siberian_config/src/ext/theme_ext.dart';
 import 'package:siberian_network/src/loggers/network_loggers.dart';
-import 'package:oktoast/oktoast.dart';
 
 class NetworkLogPart with ChangeNotifier implements ConfigPart {
   @override
@@ -57,7 +53,6 @@ class _NetworkLogConfigPartWidget extends StatefulWidget {
   final EdgeInsets? padding;
 
   const _NetworkLogConfigPartWidget({
-    super.key,
     required this.part,
     this.padding,
   });
@@ -95,7 +90,7 @@ class _NetworkLogConfigPartWidgetState extends State<_NetworkLogConfigPartWidget
             ],
           ),
         ),
-        VSpacer(4),
+        const VSpacer(4),
         AbsorbPointer(
           absorbing: !widget.part.networkLogProperty.cachedValue,
           child: Opacity(
@@ -107,9 +102,9 @@ class _NetworkLogConfigPartWidgetState extends State<_NetworkLogConfigPartWidget
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  IconButton(onPressed: widget.part.onShowNetworkLog, icon: Icon(Icons.remove_red_eye)),
-                  IconButton(onPressed: _shareNetworkLog, icon: Icon(Icons.share)),
-                  IconButton(onPressed: _clearNetworkLog, icon: Icon(Icons.delete_outline)),
+                  IconButton(onPressed: widget.part.onShowNetworkLog, icon: const Icon(Icons.remove_red_eye)),
+                  IconButton(onPressed: _shareNetworkLog, icon: const Icon(Icons.share)),
+                  IconButton(onPressed: _clearNetworkLog, icon: const Icon(Icons.delete_outline)),
                 ],
               ),
             ),

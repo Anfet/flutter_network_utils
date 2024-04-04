@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/rendering/viewport_offset.dart';
-import 'package:flutter/widgets.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:siberian_core/siberian_core.dart';
@@ -166,7 +165,7 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
 }
 
 class TwoDimensinalScrollText extends TwoDimensionalScrollView {
-  TwoDimensinalScrollText({
+  const TwoDimensinalScrollText({super.key, 
     super.primary,
     super.mainAxis = Axis.vertical,
     super.verticalDetails = const ScrollableDetails.vertical(),
@@ -196,7 +195,7 @@ class TwoDimensinalScrollText extends TwoDimensionalScrollView {
 }
 
 class TwoDimensionalTextViewport extends TwoDimensionalViewport {
-  TwoDimensionalTextViewport({
+  const TwoDimensionalTextViewport({
     super.key,
     required super.verticalOffset,
     required super.verticalAxisDirection,

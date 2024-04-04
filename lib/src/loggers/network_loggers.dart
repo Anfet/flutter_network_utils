@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:siberian_core/siberian_core.dart';
+import 'package:siberian_logger/siberian_logger.dart';
 import 'package:siberian_network/src/logging_interceptor.dart';
 
 class NetworkLoggers {

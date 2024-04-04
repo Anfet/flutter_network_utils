@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:siberian_config/src/ext/theme_ext.dart';
 import 'package:siberian_config/src/parts/config_part.dart';
 import 'package:siberian_core/siberian_core.dart';
+import 'package:siberian_logger/siberian_logger.dart';
 import 'package:siberian_network/siberian_network.dart';
 
 class EnviromentConfigPart with ChangeNotifier, Logging implements ConfigPart, SaveablePart {
