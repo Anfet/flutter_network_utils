@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:siberian_config/src/ext/theme_ext.dart';
@@ -95,6 +96,12 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
   Build? selectedBuild;
 
   bool get requireRestart => part._saveableData.buildProperty.cachedValue != part.buildProperty.cachedValue;
+
+  @override
+  void initState() {
+    selectedBuild = Build.from(part.buildProperty.cachedValue);
+    super.initState();
+  }
 
   @override
   void didUpdateWidget(covariant _EnviromentConfigPart oldWidget) {
@@ -274,7 +281,7 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
   Future<void> reload() async {
     var build = await Build.load(part._saveableData.buildProperty);
     var proxy = await CustomProxy.load(part._saveableData.proxyProperty);
-    setStateChecked(() {
+    setState(() {
       customController.text = build.enviroment == Enviroment.custom.name ? build.host : '';
       proxyController.text = proxy.isValid ? proxy.url : '';
       selectedBuild = build;
