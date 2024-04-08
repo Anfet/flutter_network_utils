@@ -110,31 +110,17 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
-                child: RawScrollbar(
+                child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   controller: scrollController,
-                  scrollbarOrientation: ScrollbarOrientation.right,
-                  trackVisibility: true,
-                  trackColor: Theme.of(context).colorScheme.primary,
-                  radius: const Radius.circular(4),
                   child: SingleChildScrollView(
                     physics: AlwaysScrollableScrollPhysics(),
                     padding: const EdgeInsets.symmetric(horizontal: 12),
-                    scrollDirection: Axis.vertical,
-                    child: RawScrollbar(
-                      trackVisibility: true,
-                      trackColor: Theme.of(context).colorScheme.primary,
-                      thumbColor: Theme.of(context).colorScheme.primary,
-                      radius: const Radius.circular(4),
-                      scrollbarOrientation: ScrollbarOrientation.bottom,
-                      child: SingleChildScrollView(
-                        physics: AlwaysScrollableScrollPhysics(),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        scrollDirection: Axis.horizontal,
-                        child: SelectableText(
-                          text.value ?? '',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(fontFamily: widget.fontFamily),
-                        ),
-                      ),
+                    scrollDirection: Axis.horizontal,
+                    child: Text(
+                      text.value ?? '',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(fontFamily: widget.fontFamily),
                     ),
                   ),
                 ),
