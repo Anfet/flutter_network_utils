@@ -31,10 +31,10 @@ class LoggingInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     if (isEnabled) {
-      logger.logMessage('=> ${options.method} ${options.uri}', tag: _tag, truncateMessage: truncateMessages);
+      logger.logMessage('=> ${options.method} ${options.uri}', tag: _tag, truncateMessage: false);
 
       if (logHeaders) {
-        logger.logMessage('=> HEADERS: ${options.headers}', tag: _tag, truncateMessage: truncateMessages);
+        logger.logMessage('=> HEADERS: ${options.headers}', tag: _tag, truncateMessage: false);
       }
 
       if (options.data != null) {
@@ -59,7 +59,7 @@ class LoggingInterceptor extends Interceptor {
       var startTime = DateTime.fromMillisecondsSinceEpoch(err.requestOptions.extra['start-time'] as int);
       var endTime = DateTime.now();
       var msec = endTime.difference(startTime).inMilliseconds;
-      logger.logMessage('<= ERROR ${err.requestOptions.uri} ($msec msec)', tag: _tag, truncateMessage: truncateMessages);
+      logger.logMessage('<= ERROR ${err.requestOptions.uri} ($msec msec)', tag: _tag, truncateMessage: false);
       verbose(err.response);
     }
 
