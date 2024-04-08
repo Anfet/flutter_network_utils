@@ -39,8 +39,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/certs/
-    - assets/fonts/
   fonts:
     - family: SpaceMono
       fonts:
-        - asset: assets/fonts/SpaceMono-Regular.ttf
+        - asset: lib/fonts/SpaceMono-Regular.ttf

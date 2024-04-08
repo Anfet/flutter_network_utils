@@ -117,6 +117,7 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
                   trackColor: Theme.of(context).colorScheme.primary,
                   radius: const Radius.circular(4),
                   child: SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     scrollDirection: Axis.vertical,
                     child: RawScrollbar(
@@ -126,6 +127,7 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
                       radius: const Radius.circular(4),
                       scrollbarOrientation: ScrollbarOrientation.bottom,
                       child: SingleChildScrollView(
+                        physics: AlwaysScrollableScrollPhysics(),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         scrollDirection: Axis.horizontal,
                         child: SelectableText(
