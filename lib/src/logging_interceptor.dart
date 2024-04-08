@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
-import 'package:siberian_core/siberian_core.dart' as siberian_core;
+import 'package:siberian_logger/siberian_logger.dart';
 
 const _tag = 'DIO';
 
@@ -31,14 +31,14 @@ class LoggingInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     if (isEnabled) {
-      logger.t('$_tag => ${options.method} ${options.uri}');
+      logger.logMessage('=> ${options.method} ${options.uri}', tag: _tag, truncateMessage: truncateMessages);
 
       if (logHeaders) {
-        logger.t('$_tag => HEADERS: ${options.headers}');
+        logger.logMessage('=> HEADERS: ${options.headers}', tag: _tag, truncateMessage: truncateMessages);
       }
 
       if (options.data != null) {
-        logger.t('$_tag => ${options.data}');
+        logger.logMessage('=> ${options.data}', tag: _tag, truncateMessage: truncateMessages);
       }
     }
 
@@ -59,7 +59,7 @@ class LoggingInterceptor extends Interceptor {
       var startTime = DateTime.fromMillisecondsSinceEpoch(err.requestOptions.extra['start-time'] as int);
       var endTime = DateTime.now();
       var msec = endTime.difference(startTime).inMilliseconds;
-      logger.t('$_tag <= ERROR ${err.requestOptions.uri} ($msec msec)');
+      logger.logMessage('<= ERROR ${err.requestOptions.uri} ($msec msec)', tag: _tag, truncateMessage: truncateMessages);
       verbose(err.response);
     }
 
@@ -76,14 +76,17 @@ class LoggingInterceptor extends Interceptor {
     var msec = endTime.difference(startTime).inMilliseconds;
 
     dynamic contentLength = response.headers['content-length']?.firstOrNull ?? _calculateContentLength(response);
-    logger.t(
-        '$_tag <= ${response.statusCode} ${response.requestOptions.method} ${response.requestOptions.uri} \'${response.statusMessage}\' ($contentLength bytes / $msec msec)');
+    logger.logMessage(
+      '<= ${response.statusCode} ${response.requestOptions.method} ${response.requestOptions.uri} \'${response.statusMessage}\' ($contentLength bytes / $msec msec)',
+      tag: _tag,
+      truncateMessage: truncateMessages,
+    );
 
     if (response.data != null) {
       if (response.data is Map) {
-        logger.t('$_tag <= ${jsonEncode(response.data)}}');
+        logger.logMessage('<= ${jsonEncode(response.data)}}', tag: _tag, truncateMessage: truncateMessages);
       } else {
-        logger.t('$_tag <= ${response.data}}');
+        logger.logMessage('$_tag <= ${response.data}}', tag: _tag, truncateMessage: truncateMessages);
       }
     }
   }
