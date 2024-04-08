@@ -14,11 +14,13 @@ import 'package:siberian_network/siberian_network.dart';
 class NetworkLogScreeen extends StatefulWidget {
   final String textIfEmpty;
   final String deleteToastMessage;
+  final String fontFamily;
 
   const NetworkLogScreeen({
     super.key,
     this.textIfEmpty = 'No network logs',
     this.deleteToastMessage = 'Network log cleared',
+    this.fontFamily = 'SpaceMono',
   });
 
   @override
@@ -27,6 +29,7 @@ class NetworkLogScreeen extends StatefulWidget {
 
 class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedStateMixin {
   Loadable<String> text = const Loadable.loading();
+  final scrollController = ScrollController();
 
   Timer? timer;
 
@@ -38,6 +41,7 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
 
   @override
   void dispose() {
+    scrollController.dispose();
     cancelTimer();
     super.dispose();
   }
@@ -107,6 +111,7 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
             children: [
               Expanded(
                 child: RawScrollbar(
+                  controller: scrollController,
                   scrollbarOrientation: ScrollbarOrientation.right,
                   trackVisibility: true,
                   trackColor: Theme.of(context).colorScheme.primary,
@@ -125,7 +130,7 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
                         scrollDirection: Axis.horizontal,
                         child: SelectableText(
                           text.value ?? '',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(fontFamily: 'SpaceMono'),
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(fontFamily: widget.fontFamily),
                         ),
                       ),
                     ),
@@ -147,7 +152,11 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
     var text = file.existsSync() ? await file.readAsString() : '';
 
     setState(() {
+      var jumpToLast = scrollController.hasClients ? scrollController.position.maxScrollExtent == scrollController.offset : false;
       this.text = text.asValue;
+      if (jumpToLast) {
+        scrollController.jumpTo(scrollController.position.maxScrollExtent);
+      }
     });
 
     scheduleTimer();
@@ -162,138 +171,4 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
   }
 
   void cancelTimer() => timer?.cancel();
-}
-
-class TwoDimensinalScrollText extends TwoDimensionalScrollView {
-  const TwoDimensinalScrollText({super.key, 
-    super.primary,
-    super.mainAxis = Axis.vertical,
-    super.verticalDetails = const ScrollableDetails.vertical(),
-    super.horizontalDetails = const ScrollableDetails.horizontal(),
-    super.cacheExtent,
-    super.diagonalDragBehavior = DiagonalDragBehavior.free,
-    super.dragStartBehavior = DragStartBehavior.start,
-    super.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
-    super.clipBehavior = Clip.hardEdge,
-    required super.delegate,
-  });
-
-  @override
-  Widget buildViewport(BuildContext context, ViewportOffset verticalOffset, ViewportOffset horizontalOffset) {
-    return TwoDimensionalTextViewport(
-      delegate: delegate,
-      horizontalAxisDirection: horizontalDetails.direction,
-      horizontalOffset: horizontalOffset,
-      mainAxis: mainAxis,
-      verticalAxisDirection: verticalDetails.direction,
-      verticalOffset: verticalOffset,
-      clipBehavior: clipBehavior,
-      key: key,
-      cacheExtent: cacheExtent,
-    );
-  }
-}
-
-class TwoDimensionalTextViewport extends TwoDimensionalViewport {
-  const TwoDimensionalTextViewport({
-    super.key,
-    required super.verticalOffset,
-    required super.verticalAxisDirection,
-    required super.horizontalOffset,
-    required super.horizontalAxisDirection,
-    required super.delegate,
-    required super.mainAxis,
-    super.cacheExtent,
-    super.clipBehavior = Clip.hardEdge,
-  });
-
-  @override
-  RenderTwoDimensionalTextViewport createRenderObject(BuildContext context) {
-    return RenderTwoDimensionalTextViewport(
-      horizontalOffset: horizontalOffset,
-      horizontalAxisDirection: horizontalAxisDirection,
-      verticalOffset: verticalOffset,
-      verticalAxisDirection: verticalAxisDirection,
-      delegate: delegate,
-      mainAxis: mainAxis,
-      childManager: context as TwoDimensionalChildManager,
-    );
-  }
-
-  @override
-  void updateRenderObject(BuildContext context, covariant RenderTwoDimensionalTextViewport renderObject) {
-    renderObject
-      ..cacheExtent = cacheExtent
-      ..clipBehavior = clipBehavior
-      ..verticalOffset = verticalOffset
-      ..mainAxis = mainAxis
-      ..horizontalOffset = horizontalOffset
-      ..delegate = delegate
-      ..verticalAxisDirection = verticalAxisDirection
-      ..horizontalOffset = horizontalOffset
-      ..horizontalAxisDirection = horizontalAxisDirection;
-  }
-}
-
-class RenderTwoDimensionalTextViewport extends RenderTwoDimensionalViewport {
-  RenderTwoDimensionalTextViewport({
-    required super.horizontalOffset,
-    required super.horizontalAxisDirection,
-    required super.verticalOffset,
-    required super.verticalAxisDirection,
-    required super.delegate,
-    required super.mainAxis,
-    required super.childManager,
-  });
-
-  @override
-  void layoutChildSequence() {
-    final double horizontalPixels = horizontalOffset.pixels;
-    final double verticalPixels = verticalOffset.pixels;
-    final double viewportWidth = viewportDimension.width + cacheExtent;
-    final double viewportHeight = viewportDimension.height + cacheExtent;
-    final TwoDimensionalChildBuilderDelegate builderDelegate = delegate as TwoDimensionalChildBuilderDelegate;
-
-    final int maxRowIndex = builderDelegate.maxYIndex!;
-    final int maxColumnIndex = builderDelegate.maxXIndex!;
-
-    final int leadingColumn = math.max((horizontalPixels / 200).floor(), 0);
-    final int leadingRow = math.max((verticalPixels / 200).floor(), 0);
-    final int trailingColumn = math.min(
-      ((horizontalPixels + viewportWidth) / 200).ceil(),
-      maxColumnIndex,
-    );
-    final int trailingRow = math.min(
-      ((verticalPixels + viewportHeight) / 200).ceil(),
-      maxRowIndex,
-    );
-
-    double xLayoutOffset = (leadingColumn * 200) - horizontalOffset.pixels;
-    for (int column = leadingColumn; column <= trailingColumn; column++) {
-      double yLayoutOffset = (leadingRow * 200) - verticalOffset.pixels;
-      for (int row = leadingRow; row <= trailingRow; row++) {
-        final ChildVicinity vicinity = ChildVicinity(xIndex: column, yIndex: row);
-        final RenderBox child = buildOrObtainChildFor(vicinity)!;
-        child.layout(constraints.loosen());
-
-        // Subclasses only need to set the normalized layout offset. The super
-        // class adjusts for reversed axes.
-        parentDataOf(child).layoutOffset = Offset(xLayoutOffset, yLayoutOffset);
-        yLayoutOffset += 200;
-      }
-      xLayoutOffset += 200;
-    }
-
-    // Set the min and max scroll extents for each axis.
-    final double verticalExtent = 200 * (maxRowIndex + 1);
-    verticalOffset.applyContentDimensions(
-      0.0,
-      clampDouble(verticalExtent - viewportDimension.height, 0.0, double.infinity),
-    );
-    final double horizontalExtent = 200 * (maxColumnIndex + 1);
-    horizontalOffset.applyContentDimensions(
-      0.0,
-      clampDouble(horizontalExtent - viewportDimension.width, 0.0, double.infinity),
-    );
-  }
 }
