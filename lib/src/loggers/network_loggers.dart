@@ -28,7 +28,6 @@ class NetworkLoggers {
       isEnabled: logToFile,
       Logger(
         printer: CustomLogger(
-          truncateMessages: false,
           isColored: false,
           messageTransformer: (message) {
             return message;
@@ -46,7 +45,6 @@ class NetworkLoggers {
     name: 'console_logger',
     Logger(
       printer: CustomLogger(
-        truncateMessages: false,
         isColored: false,
       ),
       filter: DevelopmentFilter(),
