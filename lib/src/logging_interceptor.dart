@@ -11,6 +11,7 @@ class LoggingInterceptor extends Interceptor {
   final Logger logger;
   bool _enabled;
   bool logHeaders;
+  bool truncateMessages;
 
   bool get isEnabled => _enabled;
 
@@ -24,6 +25,7 @@ class LoggingInterceptor extends Interceptor {
     required this.name,
     this.logHeaders = true,
     bool isEnabled = true,
+    this.truncateMessages = false,
   }) : _enabled = isEnabled;
 
   @override
