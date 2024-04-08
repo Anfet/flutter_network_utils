@@ -9,6 +9,10 @@ import 'package:siberian_network/src/logging_interceptor.dart';
 class NetworkLoggers {
   NetworkLoggers._();
 
+  static LoggingInterceptor? _networkToConsoleInterceptor;
+
+  static LoggingInterceptor get networkToConsoleInterceptor => require(_networkToConsoleInterceptor);
+
   static LoggingInterceptor? _networkToFileInterceptor;
 
   static LoggingInterceptor get networkToFileInterceptor => require(_networkToFileInterceptor);
@@ -22,32 +26,29 @@ class NetworkLoggers {
   static Future<void> initInterceptors({
     required bool logToFile,
     required bool logToConsole,
+    bool truncateConsoleMessages = true,
   }) async {
-    _networkToFileInterceptor ??= LoggingInterceptor(
+    _networkToFileInterceptor = LoggingInterceptor(
       name: 'file_logger',
       isEnabled: logToFile,
+      truncateMessages: false,
       Logger(
-        printer: CustomLogger(
-          isColored: false,
-          messageTransformer: (message) {
-            return message;
-          },
-        ),
+        printer: CustomLogger(isColored: false),
         output: FileOutput(file: await networkLogFile),
         filter: ProductionFilter(),
       ),
     );
 
+
+    _networkToConsoleInterceptor = LoggingInterceptor(
+      name: 'console_logger',
+      truncateMessages: truncateConsoleMessages,
+      Logger(
+        printer: CustomLogger(isColored: false),
+        filter: DevelopmentFilter(),
+      ),
+    );
+
     networkToConsoleInterceptor.isEnabled = logToConsole;
   }
-
-  static LoggingInterceptor networkToConsoleInterceptor = LoggingInterceptor(
-    name: 'console_logger',
-    Logger(
-      printer: CustomLogger(
-        isColored: false,
-      ),
-      filter: DevelopmentFilter(),
-    ),
-  );
 }
