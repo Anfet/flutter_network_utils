@@ -70,8 +70,8 @@ class EnviromentConfigPart with ChangeNotifier, Logging implements ConfigPart, S
 }
 
 class _EnviromentSaveData implements SaveableData {
-  final MemoryProperty<String> buildProperty = MemoryProperty('');
-  final MemoryProperty<String> proxyProperty = MemoryProperty('');
+  final MemoryProperty<String> buildProperty = MemoryProperty('', '');
+  final MemoryProperty<String> proxyProperty = MemoryProperty('', '');
 }
 
 class _EnviromentConfigPart extends StatefulWidget {
@@ -183,6 +183,7 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
                         const VSpacer(12),
                         if (part.customHostTitle.isNotEmpty) ...[
                           Text(part.customHostTitle, style: theme.titleStyle?.bold()),
+                          const VSpacer(4),
                         ],
                         TextField(
                           controller: customController,
@@ -206,10 +207,7 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
                             errorStyle: theme.textTheme.labelMedium,
                             hintText: 'https://, 127.0.0.1',
                             hintStyle: theme.inputDecorationTheme.hintStyle ?? theme.textStyle?.copyWith(color: theme.hintColor),
-                            constraints: theme.inputDecorationTheme.constraints ??
-                                const BoxConstraints(
-                                  maxHeight: 52,
-                                ),
+                            constraints: theme.inputDecorationTheme.constraints,
                             errorText: null,
                             isDense: theme.inputDecorationTheme.isDense ?? true,
                             contentPadding: theme.inputDecorationTheme.contentPadding ?? EdgeInsets.zero,
@@ -222,6 +220,7 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
                               child: Text(part.clearButtonText, style: theme.labelStyle),
                               onPressed: () {
                                 customController.text = '';
+                                onCustomHostChanged('');
                               },
                             ),
                           ),
@@ -235,6 +234,7 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
           const VSpacer(12),
           if (part.proxyHostTitle.isNotEmpty) ...[
             Text(part.proxyHostTitle, style: theme.titleStyle?.bold()),
+            const VSpacer(4),
           ],
           TextField(
             controller: proxyController,
@@ -254,10 +254,7 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
               focusedErrorBorder: theme.inputDecorationTheme.focusedErrorBorder,
               errorStyle: theme.textTheme.labelMedium,
               hintStyle: theme.inputDecorationTheme.hintStyle ?? theme.textStyle?.copyWith(color: theme.hintColor),
-              constraints: theme.inputDecorationTheme.constraints ??
-                  const BoxConstraints(
-                    maxHeight: 52,
-                  ),
+              constraints: theme.inputDecorationTheme.constraints,
               errorText: null,
               isDense: theme.inputDecorationTheme.isDense ?? true,
               contentPadding: theme.inputDecorationTheme.contentPadding ?? EdgeInsets.zero,
@@ -271,6 +268,7 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
                 child: Text(part.clearButtonText, style: theme.labelStyle),
                 onPressed: () {
                   proxyController.text = '';
+                  onProxyChanged('');
                 },
               ),
             ),
