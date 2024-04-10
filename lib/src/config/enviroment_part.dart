@@ -99,7 +99,7 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
 
   @override
   void initState() {
-    selectedBuild = Build.from(part.buildProperty.cachedValue);
+    reload();
     super.initState();
   }
 
@@ -119,6 +119,7 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return Padding(
       padding: widget.padding ?? EdgeInsets.zero,
       child: Column(
@@ -193,15 +194,25 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
                           onTapOutside: (event) {
                             FocusScope.of(context).unfocus();
                           },
+                          // decoration: In
                           decoration: InputDecoration(
+                            filled: true,
+                            fillColor: theme.inputDecorationTheme.fillColor,
+                            border: theme.inputDecorationTheme.border,
+                            focusedBorder: theme.inputDecorationTheme.focusedBorder,
+                            enabledBorder: theme.inputDecorationTheme.enabledBorder,
+                            errorBorder: theme.inputDecorationTheme.errorBorder,
+                            focusedErrorBorder: theme.inputDecorationTheme.focusedErrorBorder,
+                            errorStyle: theme.textTheme.labelMedium,
                             hintText: 'https://, 127.0.0.1',
-                            hintStyle: theme.textStyle?.copyWith(color: theme.hintColor),
-                            constraints: const BoxConstraints(
-                              maxHeight: 40,
-                            ),
+                            hintStyle: theme.inputDecorationTheme.hintStyle ?? theme.textStyle?.copyWith(color: theme.hintColor),
+                            constraints: theme.inputDecorationTheme.constraints ??
+                                const BoxConstraints(
+                                  maxHeight: 52,
+                                ),
                             errorText: null,
-                            isDense: true,
-                            contentPadding: EdgeInsets.zero,
+                            isDense: theme.inputDecorationTheme.isDense ?? true,
+                            contentPadding: theme.inputDecorationTheme.contentPadding ?? EdgeInsets.zero,
                             suffix: TextButton(
                               style: ButtonStyle(
                                 minimumSize: const MaterialStatePropertyAll(Size.zero),
@@ -234,13 +245,22 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
             keyboardType: TextInputType.text,
             decoration: InputDecoration(
               hintText: '0.0.0.0:8888',
-              hintStyle: theme.textStyle?.copyWith(color: theme.hintColor),
-              constraints: const BoxConstraints(
-                maxHeight: 40,
-              ),
+              filled: theme.inputDecorationTheme.filled ?? true,
+              fillColor: theme.inputDecorationTheme.fillColor,
+              border: theme.inputDecorationTheme.border,
+              focusedBorder: theme.inputDecorationTheme.focusedBorder,
+              enabledBorder: theme.inputDecorationTheme.enabledBorder,
+              errorBorder: theme.inputDecorationTheme.errorBorder,
+              focusedErrorBorder: theme.inputDecorationTheme.focusedErrorBorder,
+              errorStyle: theme.textTheme.labelMedium,
+              hintStyle: theme.inputDecorationTheme.hintStyle ?? theme.textStyle?.copyWith(color: theme.hintColor),
+              constraints: theme.inputDecorationTheme.constraints ??
+                  const BoxConstraints(
+                    maxHeight: 52,
+                  ),
               errorText: null,
-              isDense: true,
-              contentPadding: EdgeInsets.zero,
+              isDense: theme.inputDecorationTheme.isDense ?? true,
+              contentPadding: theme.inputDecorationTheme.contentPadding ?? EdgeInsets.zero,
               suffix: TextButton(
                 style: ButtonStyle(
                   minimumSize: const MaterialStatePropertyAll(Size.zero),
