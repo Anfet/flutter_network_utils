@@ -1,11 +1,7 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/rendering/viewport_offset.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:siberian_core/siberian_core.dart';
@@ -31,8 +27,6 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
   Loadable<String> text = const Loadable.loading();
   final scrollController = ScrollController();
 
-  Timer? timer;
-
   @override
   void initState() {
     loadNetworkLog();
@@ -42,7 +36,6 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
   @override
   void dispose() {
     scrollController.dispose();
-    cancelTimer();
     super.dispose();
   }
 
@@ -60,16 +53,12 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
         title: Text('Network log', style: Theme.of(context).textTheme.titleSmall?.medium()),
         actions: [
           IconButton(
-            onPressed: () {
-              if (timer?.isActive == true) {
-                cancelTimer();
-                markNeedsRebuild();
-              } else {
-                scheduleTimer();
-              }
+            onPressed: () async {
+              await loadNetworkLog();
+              _scrollToBottom();
             },
-            icon: Icon(timer?.isActive == true ? Icons.pause : Icons.play_arrow),
-            tooltip: timer?.isActive == true ? 'Pause watch' : 'Resume watch',
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Refresh',
           ),
           IconButton(
             onPressed: () {
@@ -91,6 +80,15 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        elevation: 4,
+        onPressed: _scrollToBottom,
+        child: Icon(
+          Icons.keyboard_arrow_down_outlined,
+          color: Theme.of(context).colorScheme.primary,
+          size: 40,
+        ),
+      ),
       body: Builder(
         builder: (context) {
           if (text.isLoading) {
@@ -110,23 +108,27 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
-                child: SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  controller: scrollController,
+                child: RawScrollbar(
+                  thumbVisibility: true,
+                  thumbColor: Theme.of(context).colorScheme.primary,
+                  thickness: 4,
+                  scrollbarOrientation: ScrollbarOrientation.right,
+                  interactive: true,
                   child: SingleChildScrollView(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    scrollDirection: Axis.horizontal,
-                    child: Text(
-                      text.value ?? '',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(fontFamily: widget.fontFamily),
+                    controller: scrollController,
+                    scrollDirection: Axis.vertical,
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      scrollDirection: Axis.horizontal,
+                      child: Text(
+                        text.value ?? '',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(fontFamily: widget.fontFamily),
+                      ),
                     ),
                   ),
                 ),
               ),
-              Text('You can select parts of text to share', textAlign: TextAlign.center, style: Theme.of(context).textTheme.labelSmall),
-              const VSpacer(12),
               const NavbarSpacer.bottom(),
             ],
           );
@@ -140,23 +142,11 @@ class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedState
     var text = file.existsSync() ? await file.readAsString() : '';
 
     setState(() {
-      var jumpToLast = scrollController.hasClients ? scrollController.position.maxScrollExtent == scrollController.offset : false;
       this.text = text.asValue;
-      if (jumpToLast) {
-        scrollController.jumpTo(scrollController.position.maxScrollExtent);
-      }
     });
-
-    scheduleTimer();
   }
 
-  void scheduleTimer() {
-    cancelTimer();
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      loadNetworkLog();
-    });
-    markNeedsRebuild();
+  void _scrollToBottom() {
+    scrollController.animateTo(scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 300), curve: Curves.linear);
   }
-
-  void cancelTimer() => timer?.cancel();
 }

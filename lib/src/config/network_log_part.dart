@@ -128,7 +128,7 @@ class _NetworkLogConfigPartWidgetState extends State<_NetworkLogConfigPartWidget
 
   Future<void> _toggleNetworkLog() async {
     await widget.part.networkLogProperty.setValue(!widget.part.networkLogProperty.cachedValue);
-    setStateChecked(() {});
+    setState(() {});
     var isEnabled = widget.part.networkLogProperty.cachedValue;
     NetworkLoggers.networkToFileInterceptor.isEnabled = isEnabled;
     widget.part.onNetworkLogStateChange?.call(isEnabled);

@@ -20,9 +20,9 @@ class NetworkScheduler with Logging {
   final Map<NetworkSchedulerPriority, List<ScheduledRequest>> scheduledRequests = {};
 
   NetworkScheduler() {
-    NetworkSchedulerPriority.values.forEach((priority) {
+    for (var priority in NetworkSchedulerPriority.values) {
       scheduledRequests.putIfAbsent(priority, () => []);
-    });
+    }
   }
 
   void start() {

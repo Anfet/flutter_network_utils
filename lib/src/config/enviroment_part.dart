@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:siberian_config/src/ext/theme_ext.dart';
@@ -16,7 +15,6 @@ class EnviromentConfigPart with ChangeNotifier, Logging implements ConfigPart, S
   final String customHostTitle;
   final String proxyHostTitle;
   final String clearButtonText;
-  final String restartRequiredText;
 
   final Property<String> buildProperty;
   final Property<String> proxyProperty;
@@ -30,10 +28,9 @@ class EnviromentConfigPart with ChangeNotifier, Logging implements ConfigPart, S
     required this.buildProperty,
     required this.proxyProperty,
     this.title = 'Enviroment',
-    this.customHostTitle = 'Custom host',
+    this.customHostTitle = 'Host',
     this.proxyHostTitle = 'Proxy',
     this.clearButtonText = 'Clear',
-    this.restartRequiredText = 'Restart required',
   });
 
   @override
@@ -58,6 +55,7 @@ class EnviromentConfigPart with ChangeNotifier, Logging implements ConfigPart, S
 
   @override
   FutureOr<bool> save() async {
+    var requireRestart = this.requireRestart;
     await buildProperty.setValue(_saveableData.buildProperty.cachedValue);
     var build = await Build.load(buildProperty);
     if (requireRestart) {
@@ -129,9 +127,8 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Expanded(child: Text(widget.part.title, style: theme.titleStyle?.bold())),
+              Text(widget.part.title, style: theme.titleStyle?.bold()),
               if (part.requireRestart) ...[
-                Text(part.restartRequiredText, style: theme.titleStyle?.copyWith(color: theme.colorScheme.error)),
                 const HSpacer(4),
                 Icon(Icons.info_outline, color: theme.colorScheme.error, size: (theme.titleStyle?.fontSize ?? 1.0) * 1.25),
               ],
@@ -165,110 +162,28 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
               ),
             ],
           ),
+          if (selectedBuild?.enviroment == Enviroment.custom.name) const VSpacer(12),
           AnimatedSize(
             duration: const Duration(milliseconds: 300),
             clipBehavior: Clip.hardEdge,
             alignment: Alignment.topCenter,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ...selectedBuild?.enviroment == Enviroment.custom.name
-                    ? [
-                        const VSpacer(12),
-                        if (part.customHostTitle.isNotEmpty) ...[
-                          Text(part.customHostTitle, style: theme.titleStyle?.bold()),
-                          const VSpacer(4),
-                        ],
-                        TextField(
-                          controller: customController,
-                          style: theme.textStyle,
-                          maxLines: 1,
-                          autocorrect: false,
-                          autofocus: false,
-                          keyboardType: TextInputType.text,
-                          onTapOutside: (event) {
-                            FocusScope.of(context).unfocus();
-                          },
-                          // decoration: In
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: theme.inputDecorationTheme.fillColor,
-                            border: theme.inputDecorationTheme.border,
-                            focusedBorder: theme.inputDecorationTheme.focusedBorder,
-                            enabledBorder: theme.inputDecorationTheme.enabledBorder,
-                            errorBorder: theme.inputDecorationTheme.errorBorder,
-                            focusedErrorBorder: theme.inputDecorationTheme.focusedErrorBorder,
-                            errorStyle: theme.textTheme.labelMedium,
-                            hintText: 'https://, 127.0.0.1',
-                            hintStyle: theme.inputDecorationTheme.hintStyle ?? theme.textStyle?.copyWith(color: theme.hintColor),
-                            constraints: theme.inputDecorationTheme.constraints,
-                            errorText: null,
-                            isDense: theme.inputDecorationTheme.isDense ?? true,
-                            contentPadding: theme.inputDecorationTheme.contentPadding ?? EdgeInsets.zero,
-                            suffix: TextButton(
-                              style: ButtonStyle(
-                                minimumSize: const MaterialStatePropertyAll(Size.zero),
-                                padding: const MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 8, vertical: 4)),
-                                foregroundColor: MaterialStatePropertyAll(theme.colorScheme.onPrimary),
-                              ),
-                              child: Text(part.clearButtonText, style: theme.labelStyle),
-                              onPressed: () {
-                                customController.text = '';
-                                onCustomHostChanged('');
-                              },
-                            ),
-                          ),
-                          onChanged: onCustomHostChanged,
-                        ),
-                      ]
-                    : [],
-              ],
-            ),
+            child: selectedBuild?.enviroment == Enviroment.custom.name
+                ? _HostEdit(
+                    label: part.customHostTitle,
+                    controller: customController,
+                    hint: 'https://, 127.0.0.1',
+                    onTextChanged: onCustomHostChanged,
+                    suffixText: part.clearButtonText,
+                  )
+                : const SizedBox(),
           ),
           const VSpacer(12),
-          if (part.proxyHostTitle.isNotEmpty) ...[
-            Text(part.proxyHostTitle, style: theme.titleStyle?.bold()),
-            const VSpacer(4),
-          ],
-          TextField(
+          _HostEdit(
             controller: proxyController,
-            style: theme.textStyle,
-            maxLines: 1,
-            autocorrect: false,
-            autofocus: false,
-            keyboardType: TextInputType.text,
-            decoration: InputDecoration(
-              hintText: '0.0.0.0:8888',
-              filled: theme.inputDecorationTheme.filled,
-              isCollapsed: theme.inputDecorationTheme.isCollapsed,
-              fillColor: theme.inputDecorationTheme.fillColor,
-              border: theme.inputDecorationTheme.border,
-              focusedBorder: theme.inputDecorationTheme.focusedBorder,
-              enabledBorder: theme.inputDecorationTheme.enabledBorder,
-              errorBorder: theme.inputDecorationTheme.errorBorder,
-              focusedErrorBorder: theme.inputDecorationTheme.focusedErrorBorder,
-              errorStyle: theme.textTheme.labelMedium,
-              hintStyle: theme.inputDecorationTheme.hintStyle ?? theme.textStyle?.copyWith(color: theme.hintColor),
-              constraints: theme.inputDecorationTheme.constraints,
-              errorText: null,
-              isDense: theme.inputDecorationTheme.isDense,
-              contentPadding: theme.inputDecorationTheme.contentPadding ?? EdgeInsets.zero,
-              suffix: TextButton(
-                style: ButtonStyle(
-                  minimumSize: const MaterialStatePropertyAll(Size.zero),
-                  padding: const MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 8, vertical: 4)),
-                  // backgroundColor: MaterialStatePropertyAll(Colors.green),
-                  foregroundColor: MaterialStatePropertyAll(theme.colorScheme.onPrimary),
-                ),
-                child: Text(part.clearButtonText, style: theme.labelStyle),
-                onPressed: () {
-                  proxyController.text = '';
-                  onProxyChanged('');
-                },
-              ),
-            ),
-            onChanged: onProxyChanged,
+            label: part.proxyHostTitle,
+            hint: '0.0.0.0:8888',
+            onTextChanged: onProxyChanged,
+            suffixText: part.clearButtonText,
           ),
         ],
       ),
@@ -277,7 +192,7 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
 
   Future<void> onBuildSelected(Build build) async {
     await build.save(part._saveableData.buildProperty);
-    setStateChecked(() {
+    setState(() {
       selectedBuild = build;
     });
   }
@@ -285,10 +200,13 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
   Future<void> onProxyChanged(String ip) async {
     var proxy = CustomProxy(ip);
     await proxy.save(part._saveableData.proxyProperty);
+    setState(() {});
   }
 
   Future<void> onCustomHostChanged(String host) async {
-    selectedBuild = Build(enviroment: Enviroment.custom.name, host: host);
+    setState(() {
+      selectedBuild = Build(enviroment: Enviroment.custom.name, host: host);
+    });
     await selectedBuild?.save(part._saveableData.buildProperty);
   }
 
@@ -328,14 +246,92 @@ class _EnviromentTile extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(model.enviroment.toUpperCase(), style: theme.titleStyle?.bold()),
+            Text(
+              model.enviroment.toUpperCase(),
+              style: theme.titleStyle
+                  ?.bold()
+                  .copyWith(color: isSelected ? theme.colorScheme.onPrimaryContainer : theme.colorScheme.onSecondaryContainer),
+            ),
             const VSpacer(8),
             Expanded(
-              child: Text(model.host, style: theme.labelStyle, overflow: TextOverflow.clip),
+              child: Text(model.host,
+                  style: theme.labelStyle?.copyWith(
+                    color: isSelected ? theme.colorScheme.onPrimaryContainer : theme.colorScheme.onSecondaryContainer,
+                  ),
+                  overflow: TextOverflow.clip),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _HostEdit extends StatelessWidget {
+  final TextEditingController controller;
+  final String? suffixText;
+  final ValueChanged<String>? onTextChanged;
+  final String? hint;
+  final String? label;
+
+  const _HostEdit({
+    required this.controller,
+    this.suffixText,
+    this.onTextChanged,
+    this.hint,
+    this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return TextField(
+      controller: controller,
+      style: theme.textStyle,
+      maxLines: 1,
+      autocorrect: false,
+      autofocus: false,
+      keyboardType: TextInputType.text,
+      onTapOutside: (event) {
+        FocusScope.of(context).unfocus();
+      },
+      expands: false,
+      decoration: InputDecoration(
+        label: label != null ? Text(label!) : null,
+        labelStyle: theme.titleStyle?.bold(),
+        hintText: hint,
+        constraints: theme.inputDecorationTheme.constraints,
+        contentPadding: theme.inputDecorationTheme.contentPadding ?? EdgeInsets.zero,
+        hintStyle: theme.inputDecorationTheme.hintStyle ?? theme.textStyle?.copyWith(color: theme.hintColor),
+        errorStyle: theme.textTheme.labelMedium,
+        isDense: theme.inputDecorationTheme.isDense,
+        isCollapsed: theme.inputDecorationTheme.isCollapsed,
+        filled: theme.inputDecorationTheme.filled,
+        fillColor: theme.inputDecorationTheme.fillColor,
+        border: theme.inputDecorationTheme.border,
+        focusedBorder: theme.inputDecorationTheme.focusedBorder,
+        enabledBorder: theme.inputDecorationTheme.enabledBorder,
+        errorBorder: theme.inputDecorationTheme.errorBorder,
+        focusedErrorBorder: theme.inputDecorationTheme.focusedErrorBorder,
+        errorText: null,
+        labelText: null,
+        counterText: null,
+        suffix: suffixText != null
+            ? TextButton(
+                style: ButtonStyle(
+                  minimumSize: const MaterialStatePropertyAll(Size.zero),
+                  padding: const MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 8, vertical: 4)),
+                  foregroundColor: MaterialStatePropertyAll(theme.colorScheme.onPrimary),
+                ),
+                child: Text(suffixText!, style: theme.labelStyle),
+                onPressed: () {
+                  controller.text = '';
+                  onTextChanged?.call('');
+                },
+              )
+            : null,
+      ),
+      onChanged: onTextChanged,
     );
   }
 }
