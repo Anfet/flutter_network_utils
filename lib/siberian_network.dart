@@ -8,5 +8,6 @@ export 'src/network_call_executor.dart';
 export 'src/network_exceptions.dart';
 
 export 'src/loggers/network_loggers.dart';
-export 'src/config/network_config_parts.dart';
 export 'src/screens/network_screens.dart';
+export 'src/config/enviroment_part.dart';
+export 'src/config/network_log_part.dart';

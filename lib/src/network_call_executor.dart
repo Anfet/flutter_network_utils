@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:siberian_core/siberian_core.dart';
 import 'package:siberian_logger/siberian_logger.dart';
 
@@ -9,7 +10,7 @@ import 'network_exceptions.dart';
 enum NetworkCallMethod { get, post, patch, delete, put }
 
 class NetworkCallExecutor with Logging {
-  final Dio dio;
+  final ValueGetter<Dio> dio;
 
   final TypedResult<Object> onNoNetwork;
   final AsyncTypedResultCallback<Options, Options>? onPreRequest;
@@ -24,83 +25,22 @@ class NetworkCallExecutor with Logging {
     this.onNetworkError,
   });
 
-  Future<T> get<T>(
-    String url, {
-    Object? data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-  }) =>
-      request(
-        url,
-        method: NetworkCallMethod.get,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-      );
+  Future<T> get<T>(String url, {Object? data, Map<String, dynamic>? queryParameters, Options? options}) =>
+      request(url, method: NetworkCallMethod.get, data: data, queryParameters: queryParameters, options: options);
 
-  Future<T> post<T>(
-    String url, {
-    Object? data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-  }) =>
-      request(
-        url,
-        method: NetworkCallMethod.post,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-      );
+  Future<T> post<T>(String url, {Object? data, Map<String, dynamic>? queryParameters, Options? options}) =>
+      request(url, method: NetworkCallMethod.post, data: data, queryParameters: queryParameters, options: options);
 
-  Future<T> put<T>(
-    String url, {
-    Object? data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-  }) =>
-      request(
-        url,
-        method: NetworkCallMethod.put,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-      );
+  Future<T> put<T>(String url, {Object? data, Map<String, dynamic>? queryParameters, Options? options}) =>
+      request(url, method: NetworkCallMethod.put, data: data, queryParameters: queryParameters, options: options);
 
-  Future<T> patch<T>(
-    String url, {
-    Object? data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-  }) =>
-      request(
-        url,
-        method: NetworkCallMethod.patch,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-      );
+  Future<T> patch<T>(String url, {Object? data, Map<String, dynamic>? queryParameters, Options? options}) =>
+      request(url, method: NetworkCallMethod.patch, data: data, queryParameters: queryParameters, options: options);
 
-  Future<T> delete<T>(
-    String url, {
-    Object? data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-  }) =>
-      request(
-        url,
-        method: NetworkCallMethod.delete,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-      );
+  Future<T> delete<T>(String url, {Object? data, Map<String, dynamic>? queryParameters, Options? options}) =>
+      request(url, method: NetworkCallMethod.delete, data: data, queryParameters: queryParameters, options: options);
 
-  Future<T> request<T>(
-    String url, {
-    required NetworkCallMethod method,
-    Object? data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-  }) async {
+  Future<T> request<T>(String url, {required NetworkCallMethod method, Object? data, Map<String, dynamic>? queryParameters, Options? options}) async {
     T? result;
     Object? error;
     options ??= Options();
@@ -114,11 +54,11 @@ class NetworkCallExecutor with Logging {
 
       stopwatch.start();
       final response = await switch (method) {
-        NetworkCallMethod.get => dio.get(url, data: data, queryParameters: queryParameters, options: options),
-        NetworkCallMethod.post => dio.post(url, data: data, queryParameters: queryParameters, options: options),
-        NetworkCallMethod.patch => dio.patch(url, data: data, queryParameters: queryParameters, options: options),
-        NetworkCallMethod.delete => dio.delete(url, data: data, queryParameters: queryParameters, options: options),
-        NetworkCallMethod.put => dio.put(url, data: data, queryParameters: queryParameters, options: options),
+        NetworkCallMethod.get => dio().get(url, data: data, queryParameters: queryParameters, options: options),
+        NetworkCallMethod.post => dio().post(url, data: data, queryParameters: queryParameters, options: options),
+        NetworkCallMethod.patch => dio().patch(url, data: data, queryParameters: queryParameters, options: options),
+        NetworkCallMethod.delete => dio().delete(url, data: data, queryParameters: queryParameters, options: options),
+        NetworkCallMethod.put => dio().put(url, data: data, queryParameters: queryParameters, options: options),
       };
 
       result = response.data;

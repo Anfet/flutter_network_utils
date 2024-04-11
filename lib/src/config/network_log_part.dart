@@ -100,7 +100,7 @@ class _NetworkLogConfigPartWidgetState extends State<_NetworkLogConfigPartWidget
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   IconButton(onPressed: widget.part.onShowNetworkLog, icon: const Icon(Icons.remove_red_eye)),
                   IconButton(onPressed: _shareNetworkLog, icon: const Icon(Icons.share)),

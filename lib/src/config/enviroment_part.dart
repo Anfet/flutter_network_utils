@@ -22,6 +22,9 @@ class EnviromentConfigPart with ChangeNotifier, Logging implements ConfigPart, S
   final Property<String> proxyProperty;
   final _EnviromentSaveData _saveableData = _EnviromentSaveData();
 
+  bool get requireRestart =>
+      _saveableData.buildProperty.cachedValue != buildProperty.cachedValue || _saveableData.proxyProperty.cachedValue != proxyProperty.cachedValue;
+
   EnviromentConfigPart({
     this.name = 'enviroment',
     required this.buildProperty,
@@ -55,7 +58,6 @@ class EnviromentConfigPart with ChangeNotifier, Logging implements ConfigPart, S
 
   @override
   FutureOr<bool> save() async {
-    var requireRestart = _saveableData.buildProperty.cachedValue != buildProperty.cachedValue;
     await buildProperty.setValue(_saveableData.buildProperty.cachedValue);
     var build = await Build.load(buildProperty);
     if (requireRestart) {
@@ -63,7 +65,6 @@ class EnviromentConfigPart with ChangeNotifier, Logging implements ConfigPart, S
     }
     if (_saveableData.proxyProperty.cachedValue != proxyProperty.cachedValue) {
       await proxyProperty.setValue(_saveableData.proxyProperty.cachedValue);
-      await CustomProxy.configure(proxyProperty);
     }
     return requireRestart;
   }
@@ -94,8 +95,6 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
   final TextEditingController proxyController = TextEditingController();
 
   Build? selectedBuild;
-
-  bool get requireRestart => part._saveableData.buildProperty.cachedValue != part.buildProperty.cachedValue;
 
   @override
   void initState() {
@@ -131,7 +130,7 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(child: Text(widget.part.title, style: theme.titleStyle?.bold())),
-              if (requireRestart) ...[
+              if (part.requireRestart) ...[
                 Text(part.restartRequiredText, style: theme.titleStyle?.copyWith(color: theme.colorScheme.error)),
                 const HSpacer(4),
                 Icon(Icons.info_outline, color: theme.colorScheme.error, size: (theme.titleStyle?.fontSize ?? 1.0) * 1.25),
@@ -144,7 +143,7 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
             mainAxisSpacing: 8,
             crossAxisSpacing: 8,
             crossAxisCount: 2,
-            childAspectRatio: 1.5,
+            childAspectRatio: 2,
             padding: EdgeInsets.zero,
             clipBehavior: Clip.none,
             children: [
@@ -153,17 +152,13 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
                   bool isSelected = enviroment.name == selectedBuild?.enviroment;
                   var host = require(Enviroments.enviroments[enviroment]).ifEmpty(customController.text);
                   Build build = Build(enviroment: enviroment.name, host: host);
-                  return PhysicalModel(
-                    color: Colors.transparent,
-                    elevation: isSelected ? 0 : 2,
+                  return InkWell(
                     borderRadius: BorderRadius.circular(8),
-                    child: InkWell(
-                      onTap: () => onBuildSelected(build),
-                      child: _EnviromentTile(
-                        isSelected: isSelected,
-                        onBuildSelected: onBuildSelected,
-                        model: build,
-                      ),
+                    onTap: () => onBuildSelected(build),
+                    child: _EnviromentTile(
+                      isSelected: isSelected,
+                      onBuildSelected: onBuildSelected,
+                      model: build,
                     ),
                   );
                 },
@@ -245,7 +240,8 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
             keyboardType: TextInputType.text,
             decoration: InputDecoration(
               hintText: '0.0.0.0:8888',
-              filled: theme.inputDecorationTheme.filled ?? true,
+              filled: theme.inputDecorationTheme.filled,
+              isCollapsed: theme.inputDecorationTheme.isCollapsed,
               fillColor: theme.inputDecorationTheme.fillColor,
               border: theme.inputDecorationTheme.border,
               focusedBorder: theme.inputDecorationTheme.focusedBorder,
@@ -256,7 +252,7 @@ class _EnviromentConfigPartState extends State<_EnviromentConfigPart> with Mount
               hintStyle: theme.inputDecorationTheme.hintStyle ?? theme.textStyle?.copyWith(color: theme.hintColor),
               constraints: theme.inputDecorationTheme.constraints,
               errorText: null,
-              isDense: theme.inputDecorationTheme.isDense ?? true,
+              isDense: theme.inputDecorationTheme.isDense,
               contentPadding: theme.inputDecorationTheme.contentPadding ?? EdgeInsets.zero,
               suffix: TextButton(
                 style: ButtonStyle(

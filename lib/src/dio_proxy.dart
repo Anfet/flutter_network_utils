@@ -20,7 +20,7 @@ class CustomProxyHttpOverride extends HttpOverrides {
     return client;
   }
 
-  CustomProxyHttpOverride.dicrect({this.allowBadCertificates = true}) : proxy = CustomProxy();
+  CustomProxyHttpOverride.direct({this.allowBadCertificates = true}) : proxy = CustomProxy();
 }
 
 @immutable
@@ -40,7 +40,7 @@ class CustomProxy with Logging {
   }
 
   static void disable() {
-    HttpOverrides.global = CustomProxyHttpOverride.dicrect();
+    HttpOverrides.global = CustomProxyHttpOverride.direct();
   }
 
   @override
