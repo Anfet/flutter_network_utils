@@ -2,6 +2,11 @@ import 'package:siberian_core/siberian_core.dart';
 
 class NetworkException extends AppException {
   NetworkException(super.message);
+
+  @override
+  String toString() {
+    return 'NetworkException{message: $message}';
+  }
 }
 
 class NoNetworkException extends NetworkException {
@@ -14,6 +19,11 @@ class ServerException extends NetworkException {
   final dynamic data;
 
   ServerException(super.message, {required this.status, this.knownCode, this.data});
+
+  @override
+  String toString() {
+    return 'ServerException{status: $status, knownCode: $knownCode, data: $data}';
+  }
 }
 
 class BadCertificateException extends NetworkException {

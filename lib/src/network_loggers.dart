@@ -1,13 +1,14 @@
 import 'dart:io';
+import 'dart:math';
 
-import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:siberian_core/siberian_core.dart';
-import 'package:siberian_logger/siberian_logger.dart';
-import 'package:siberian_network/src/logging_interceptor.dart';
+import 'package:siberian_network/src/interceptors/logging_interceptor.dart';
 
 class NetworkLoggers {
   NetworkLoggers._();
+
+  static const networkFileName = 'network_log.txt';
 
   static LoggingInterceptor? _networkToConsoleInterceptor;
 
@@ -19,8 +20,18 @@ class NetworkLoggers {
 
   static Future<File> get networkLogFile async {
     final cacheDir = await getApplicationCacheDirectory();
-    final file = File('${cacheDir.path}/network.log');
+    final file = File('${cacheDir.path}/$networkFileName');
     return file;
+  }
+
+  static Future<void> clearFileLog() => networkLogFile.then((file) => file.writeAsString('', flush: true, mode: FileMode.write));
+
+  static void overrideInterceptors({
+    LoggingInterceptor? consoleInterception,
+    LoggingInterceptor? fileInterceptor,
+  }) {
+    _networkToConsoleInterceptor = consoleInterception;
+    _networkToFileInterceptor = fileInterceptor;
   }
 
   static Future<void> initInterceptors({
@@ -39,16 +50,14 @@ class NetworkLoggers {
       ),
     );
 
-
     _networkToConsoleInterceptor = LoggingInterceptor(
       name: 'console_logger',
       truncateMessages: truncateConsoleMessages,
+      isEnabled: logToConsole,
       Logger(
         printer: CustomLogger(isColored: false),
         filter: DevelopmentFilter(),
       ),
     );
-
-    networkToConsoleInterceptor.isEnabled = logToConsole;
   }
 }

@@ -56,17 +56,13 @@ class LoggingInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     if (isEnabled) {
-      var startTime = DateTime.fromMillisecondsSinceEpoch(err.requestOptions.extra['start-time'] as int);
-      var endTime = DateTime.now();
-      var msec = endTime.difference(startTime).inMilliseconds;
-      logger.logMessage('<= ERROR ${err.requestOptions.uri} ($msec msec)', tag: _tag, truncateMessage: false);
-      verbose(err.response);
+      verbose(err.response, error: err);
     }
 
     return handler.next(err);
   }
 
-  void verbose<T>(Response<T>? response) {
+  void verbose<T>(Response<T>? response, {DioException? error}) {
     if (response == null) {
       return;
     }
@@ -74,19 +70,20 @@ class LoggingInterceptor extends Interceptor {
     var startTime = DateTime.fromMillisecondsSinceEpoch(response.requestOptions.extra['start-time'] as int);
     var endTime = DateTime.now();
     var msec = endTime.difference(startTime).inMilliseconds;
+    // logger.logMessage('<=  ${err.requestOptions.uri} ($msec msec)', tag: _tag, truncateMessage: false);
 
     dynamic contentLength = response.headers['content-length']?.firstOrNull ?? _calculateContentLength(response);
     logger.logMessage(
-      '<= ${response.statusCode} ${response.requestOptions.method} ${response.requestOptions.uri} \'${response.statusMessage}\' ($contentLength bytes / $msec msec)',
+      '<= ${response.statusCode} ${error == null ? '' : 'ERROR | '}${response.requestOptions.method} ${response.requestOptions.uri} ${response.statusMessage} ($contentLength bytes / $msec msec)',
       tag: _tag,
       truncateMessage: truncateMessages,
     );
 
     if (response.data != null) {
-      if (response.data is Map) {
-        logger.logMessage('<= ${jsonEncode(response.data)}}', tag: _tag, truncateMessage: truncateMessages);
+      if (response.data is Map || response.data is Iterable) {
+        logger.logMessage('<= ${jsonEncode(response.data)}', tag: _tag, truncateMessage: truncateMessages);
       } else {
-        logger.logMessage('$_tag <= ${response.data}}', tag: _tag, truncateMessage: truncateMessages);
+        logger.logMessage('<= ${response.data}', tag: _tag, truncateMessage: truncateMessages);
       }
     }
   }

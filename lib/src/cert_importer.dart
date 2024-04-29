@@ -7,7 +7,10 @@ import 'package:siberian_network/generated/assets.dart';
 class CertImporter {
   CertImporter._();
 
-  static Future<void> importCharleyCert({String asset = Assets.certsCharley}) async {
+  static const charleyCertLibraryPath = 'packages/siberian_network/certs/charley.pem';
+  static const charleyCertPath = 'assets/certs/charley.pem';
+
+  static Future<void> importCharleyCert({required String asset}) async {
     var securityContext = platform.SecurityContext.defaultContext;
     String data = await rootBundle.loadString(asset);
     List<int> bytes = utf8.encode(data);
