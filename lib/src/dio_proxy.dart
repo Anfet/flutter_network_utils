@@ -48,17 +48,17 @@ class CustomProxy with Logging {
     return url.isEmpty ? "DIRECT" : "PROXY $url";
   }
 
-  Future<void> save(Property<String> property) async {
+  Future<void> save(StorableProperty<String> property) async {
     return isValid ? property.setValue(url.toString()) : property.delete();
   }
 
-  static Future<CustomProxy> load(Property<String> property) async {
+  static Future<CustomProxy> load(StorableProperty<String> property) async {
     final string = await property.getValue();
     final proxy = CustomProxy(string);
     return proxy;
   }
 
-  static Future<void> configure(Property<String> property) async {
+  static Future<void> configure(StorableProperty<String> property) async {
     try {
       final proxy = await CustomProxy.load(property);
       if (proxy.isValid) {

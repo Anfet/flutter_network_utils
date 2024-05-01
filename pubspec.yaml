@@ -21,7 +21,7 @@ dependencies:
   siberian_core:
     git:
       url: "https://git.siberian.pro/toplionkin/flutter_siberian_core.git"
-      ref: "release/1.0.9"
+      ref: "release/1.0.10"
 
   path_provider: ^2.1.3
 

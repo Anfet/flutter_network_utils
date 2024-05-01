@@ -348,11 +348,11 @@ packages:
     dependency: transitive
     description:
       path: "."
-      ref: "release/1.0.9"
-      resolved-ref: "564f9b52d4ee8dad726d180f26a78a37cd23352e"
+      ref: "release/1.0.10"
+      resolved-ref: "6a4fa8b256d4689cc0d52400c9053ff1d1f66d7d"
       url: "https://git.siberian.pro/toplionkin/flutter_siberian_core.git"
     source: git
-    version: "1.0.8"
+    version: "1.0.10"
   siberian_logger:
     dependency: transitive
     description:
