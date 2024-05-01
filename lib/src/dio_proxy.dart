@@ -52,6 +52,11 @@ class CustomProxy with Logging {
     return isValid ? property.setValue(url.toString()) : property.delete();
   }
 
+  static CustomProxy from(String text) {
+    final proxy = CustomProxy(text);
+    return proxy;
+  }
+
   static Future<CustomProxy> load(StorableProperty<String> property) async {
     final string = await property.getValue();
     final proxy = CustomProxy(string);
