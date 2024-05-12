@@ -14,14 +14,14 @@ class DemoScreen extends StatefulWidget {
   State<DemoScreen> createState() => _DemoScreenState();
 }
 
-class _DemoScreenState extends State<DemoScreen> with MountedStateMixin {
+class _DemoScreenState extends State<DemoScreen> with MountedCheck {
   late final Dio dio;
   Loadable<Map> localeInfo = const Loadable.idle();
   Loadable<String> lorem = const Loadable.idle();
   Loadable complex = const Loadable.idle();
   Loadable cancel = const Loadable.idle();
 
-  final NetworkScheduler scheduler = NetworkScheduler();
+  final QueryScheduler scheduler = QueryScheduler();
   late final NetworkCallExecutor executor;
 
   @override
@@ -138,8 +138,8 @@ class _DemoScreenState extends State<DemoScreen> with MountedStateMixin {
   Future fetchComplex() async {
     setState(() => complex = complex.loading());
     try {
-      await scheduler.schedule(() => executor.get('http://ip-api.com/json/'));
-      await scheduler.schedule(() => executor.get('https://api.api-ninjas.com/v1/loremipsum'));
+      await scheduler.enqueue(() => executor.get('http://ip-api.com/json/'));
+      await scheduler.enqueue(() => executor.get('https://api.api-ninjas.com/v1/loremipsum'));
       setState(() => complex = complex.result());
     } finally {
       setState(() => complex = complex.idle());
@@ -149,7 +149,7 @@ class _DemoScreenState extends State<DemoScreen> with MountedStateMixin {
   Future fetchAndCancel() async {
     setState(() => cancel = cancel.loading());
     try {
-      var request = scheduler.schedule(() => Future.delayed(const Duration(seconds: 5)), tag: 'x');
+      var request = scheduler.enqueue(() => Future.delayed(const Duration(seconds: 5)), tag: 'x');
       var future = request.future;
       await Future.wait(
         [
@@ -169,8 +169,7 @@ class _DemoScreenState extends State<DemoScreen> with MountedStateMixin {
   void scheduleTasks() {
     var count = 5 + randomizer.nextInt(20);
     for (var i = 0; i < count; i++) {
-      var request = scheduler.schedule(() => Future.delayed(Duration(seconds: randomizer.nextInt(10))),
-          priority: NetworkSchedulerPriority.values.randomElement);
+      var request = scheduler.enqueue(() => Future.delayed(Duration(seconds: randomizer.nextInt(10))), priority: QueryPriority.values.randomElement);
       request.future.then((_) => logMessage('request ${request.id} done'));
     }
   }

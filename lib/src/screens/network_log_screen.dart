@@ -25,7 +25,7 @@ class NetworkLogScreeen extends StatefulWidget {
   State<NetworkLogScreeen> createState() => _NetworkLogScreeenState();
 }
 
-class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedStateMixin {
+class _NetworkLogScreeenState extends State<NetworkLogScreeen> with MountedCheck {
   Loadable<List<String>> lines = const Loadable.loading();
 
   bool isTooLarge = false;

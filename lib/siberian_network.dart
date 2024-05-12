@@ -12,4 +12,3 @@ export 'src/network_exceptions.dart';
 
 export 'src/network_loggers.dart';
 export 'src/screens/network_log_screen.dart';
-export 'src/network_scheduler.dart';
