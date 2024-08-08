@@ -1,6 +1,6 @@
-name: siberian_network
-description: "Siberian core network module"
-version: 0.0.2
+name: flutter_network_utils
+description: "Flutter dio network utils"
+version: 0.0.3
 publish_to: none
 
 environment:
@@ -11,22 +11,14 @@ dependencies:
   flutter:
     sdk: flutter
 
-  logger: ^2.0.2+1
-  dio: ^5.4.1
+  dio: ^5.5.0+1
   path_provider: any
-  share_plus: any
-  oktoast: any
 
-
-  siberian_core:
+  flutter_commons:
     git:
-      url: "https://git.siberian.pro/toplionkin/flutter_siberian_core.git"
-      ref: "release/1.0.11"
+      url: "https://github.com/Anfet/flutter_commons.git"
+      ref: "release/1.0.15"
 
-  siberian_config:
-    git:
-      url: "https://git.siberian.pro/toplionkin/siberian_config.git"
-      ref: "master"
 
 dev_dependencies:
   flutter_lints: ^3.0.1
@@ -35,9 +27,9 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
-  assets:
-    - assets/certs/
   fonts:
     - family: SpaceMono
       fonts:
         - asset: lib/fonts/SpaceMono-Regular.ttf
+  assets:
+    - lib/fonts/

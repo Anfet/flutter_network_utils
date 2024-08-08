@@ -2,8 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:siberian_core/siberian_core.dart';
-import 'package:siberian_logger/siberian_logger.dart';
+import 'package:flutter_commons/flutter_commons.dart';
 
 import 'network_exceptions.dart';
 
@@ -71,7 +70,7 @@ class NetworkCallExecutor with Logging {
 
       T result = response.data;
       return result;
-    } catch (ex, stack) {
+    } catch (ex) {
       // recordException(ex, ex, stack);
       var error = _parseNetworkException(ex);
       throw error;

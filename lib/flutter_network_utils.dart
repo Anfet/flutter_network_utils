@@ -1,6 +1,6 @@
-library siberian_network;
+library flutter_network_utils;
 
-export 'package:siberian_core/siberian_core.dart';
+export 'package:flutter_commons/flutter_commons.dart';
 export 'package:dio/dio.dart';
 
 export 'src/cert_importer.dart';

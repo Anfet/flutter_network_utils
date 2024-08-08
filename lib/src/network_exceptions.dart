@@ -1,4 +1,4 @@
-import 'package:siberian_core/siberian_core.dart';
+import 'package:flutter_commons/flutter_commons.dart';
 
 class NetworkException extends AppException {
   NetworkException(super.message);

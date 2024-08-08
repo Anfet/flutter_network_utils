@@ -1,8 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:logger/logger.dart';
-import 'package:siberian_logger/siberian_logger.dart';
+import 'package:flutter_commons/flutter_commons.dart';
 
 const _tag = 'DIO';
 

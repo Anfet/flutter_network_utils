@@ -2,10 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_network_utils/flutter_network_utils.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:siberian_network/siberian_network.dart';
 
 class DemoScreen extends StatefulWidget {
   const DemoScreen({super.key});
@@ -138,8 +137,8 @@ class _DemoScreenState extends State<DemoScreen> with MountedCheck {
   Future fetchComplex() async {
     setState(() => complex = complex.loading());
     try {
-      await scheduler.enqueue(() => executor.get('http://ip-api.com/json/'));
-      await scheduler.enqueue(() => executor.get('https://api.api-ninjas.com/v1/loremipsum'));
+      scheduler.enqueue(() => executor.get('http://ip-api.com/json/'));
+      scheduler.enqueue(() => executor.get('https://api.api-ninjas.com/v1/loremipsum'));
       setState(() => complex = complex.result());
     } finally {
       setState(() => complex = complex.idle());

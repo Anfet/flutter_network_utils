@@ -1,8 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:siberian_core/siberian_core.dart';
-import 'package:siberian_logger/siberian_logger.dart';
+import 'package:flutter_commons/flutter_commons.dart';
 
 const _tag = "CustomProxy";
 

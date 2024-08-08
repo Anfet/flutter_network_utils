@@ -2,6 +2,16 @@
 class Assets {
   Assets._();
 
-  static const String certsCharley = 'assets/certs/charley.pem';
+  static const String dtoNetworkErrorModel = 'lib/src/dto/network_error_model.dart';
+  static const String fontsSpaceMonoRegular = 'lib/fonts/SpaceMono-Regular.ttf';
+  static const String generatedAssets = 'lib/generated/assets.dart';
+  static const String interceptorsLoggingInterceptor = 'lib/src/interceptors/logging_interceptor.dart';
+  static const String libFlutterNetworkUtils = 'lib/flutter_network_utils.dart';
+  static const String screensNetworkLogScreen = 'lib/src/screens/network_log_screen.dart';
+  static const String srcCertImporter = 'lib/src/cert_importer.dart';
+  static const String srcDioProxy = 'lib/src/dio_proxy.dart';
+  static const String srcNetworkCallExecutor = 'lib/src/network_call_executor.dart';
+  static const String srcNetworkExceptions = 'lib/src/network_exceptions.dart';
+  static const String srcNetworkLoggers = 'lib/src/network_loggers.dart';
 
 }

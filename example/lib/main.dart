@@ -1,15 +1,13 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:example/src/demo_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_network_utils/flutter_network_utils.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:siberian_logger/siberian_logger.dart';
-import 'package:siberian_network/siberian_network.dart';
 
 void main() {
   runZonedGuarded(() async {
-    await WidgetsFlutterBinding.ensureInitialized();
+    WidgetsFlutterBinding.ensureInitialized();
     await NetworkLoggers.initInterceptors(logToFile: true, logToConsole: true);
     runApp(const ExampleApp());
   }, (error, stack) {
@@ -54,7 +52,7 @@ class _ExampleAppState extends State<ExampleApp> {
         title: 'Flutter Demo',
         theme: theme,
         debugShowCheckedModeBanner: false,
-        home: DemoScreen(),
+        home: const DemoScreen(),
       ),
     );
   }

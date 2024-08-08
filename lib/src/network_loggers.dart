@@ -1,9 +1,8 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:path_provider/path_provider.dart';
-import 'package:siberian_core/siberian_core.dart';
-import 'package:siberian_network/src/interceptors/logging_interceptor.dart';
+import 'package:flutter_commons/flutter_commons.dart';
+import 'package:flutter_network_utils/src/interceptors/logging_interceptor.dart';
 
 class NetworkLoggers {
   NetworkLoggers._();

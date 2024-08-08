@@ -5,9 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:siberian_core/siberian_core.dart';
-import 'package:siberian_network/siberian_network.dart';
+import 'package:flutter_commons/flutter_commons.dart';
+import 'package:flutter_network_utils/src/network_loggers.dart';
 
 class NetworkLogScreeen extends StatefulWidget {
   final String fontFamily;
